@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Slot Machine</title>
+    <link rel="stylesheet" href="style.css">
+    </link>
+    <link href="https://afeld.github.io/emoji-css/emoji.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Great+Vibes" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.4.0/react.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.4.0/react-dom.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/JSXTransformer.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+</head>
+
+<body>
+    <div id="container">
+    </div>
+    <script type="text/jsx">
+        const path = 'img/';
+
+        let result = [];
+
+        class ReelItem extends React.Component {
+            render() {
+                var name = this.props.type + this.props.category;
+
+                return <li id={name}><img 
+                    data-type={this.props.type}
+                    alt={name}
+                    src={path + name + '.png'}/></li>;
+            }
+        }
+
+        class Reel extends React.Component {
+            constructor(props) {
+                super(props);
+                this.speed = 80;
+                
+                this.reset();
+            }
+
+            reset () {
+                this.counter = 0;
+                this.maxSpins = ((this.props.index * 1000) + (Math.random() * 1000)) / this.speed;
+            }
+
+            scroll () {
+                var _this = this;
+                this.el = $(this.refs[this.props.index]);
+                this.el.animate({
+                    top: -200,
+                }, this.speed, 'linear', function() {
+                    $(this).css('top', '0px').find('li:first').appendTo(_this.el);
+                    if (_this.counter++ < _this.maxSpins) {
+                        _this.scroll();
+                    } else {
+                        result.push(_this.el.find('li:first').attr('id'));
+                        _this.props.onStop(_this.props.index);
+                    }
+                });
+            }
+
+            render() {
+                var id = this.props.id;
+                return <div className="reel" id={id}>
+                        <ul ref={this.props.index} className="choices" style={{"top": this.props.top}}>
+                            <ReelItem category={id} type="coffee"></ReelItem>
+                            <ReelItem category={id} type="tea"></ReelItem>
+                            <ReelItem category={id} type="espresso"></ReelItem>
+                        </ul>
+                    </div>;
+            }
+        }
+
+        class TryAgainBanner extends React.Component {
+            render() {
+                return <h3 className="try-again-texts">
+                    <i className="em em-anguished"></i> Ooh, try again, better luck next time!
+                </h3>;
+            }
+        }
+
+        class ShowResult extends React.Component {
+            constructor(props) {
+                super(props);
+
+                this.winCombinations = {
+                    'teamaker-teahelper-teasubstance': 'Tea',
+                    'espressomaker-espressohelper-espressosubstance': 'Espresso',
+                    'coffeemaker-coffeehelper-coffeesubstance': 'Coffee'
+                };
+            }
+
+            render() {
+                if (result.length === 0) {
+                    return <div />;
+                }
+                else {
+                    let bevName = this.winCombinations[result.join('-')];
+                    if (bevName) {
+                        return <WinningBanner bevName={bevName} />;
+                    }
+                    else {
+                        return <TryAgainBanner />;
+                    }
+                }
+            }
+        }
+
+        class WinningBanner extends React.Component {
+            constructor(props) {
+                super(props);
+            }
+
+            render() {
+                return <h2 className="winning-texts">
+                    <i className="em em-blush"></i> Congrats, you won a cup of <b>{this.props.bevName}</b>!
+                </h2>;
+            }
+        }
+
+        class SlotMachine extends React.Component {
+            constructor(props) {
+                super(props);
+                this.declareResult = this.declareResult.bind(this);
+            }
+
+            declareResult (n) {
+                if (n === 2) {
+                    this.refs.showResult.forceUpdate()
+                    this.refs.handle.checked = false;
+                }
+            }
+
+            reset() {
+                result = [];
+                this.refs.showResult.forceUpdate()
+                for (var i = 0; i < this.props.reels; i++) {
+                    this.refs[i].reset();
+                }
+            }
+
+            start () {
+                for (var i = 0; i < this.props.reels; i++) {
+                    this.refs[i].scroll();
+                }
+            }
+
+            spin () {
+                if (this.refs.handle.checked) {
+                    this.reset();
+                    this.start();
+                }
+            }
+
+            render() {
+                return <div>
+                    <div className="reel-container">
+                        <div className="reels">
+                            <Reel onStop={this.declareResult} ref={0} index={0} id="maker"></Reel>
+                            <Reel onStop={this.declareResult} ref={1} index={1} id="helper"></Reel>
+                            <Reel onStop={this.declareResult} ref={2} index={2} id="substance"></Reel>
+                        </div>
+                        
+                        <input ref="handle" onChange={() => this.spin()} className="checkbox" id="handle" type="checkbox"/>
+                        <label className="handle" htmlFor="handle"></label>
+
+                    </div>
+                    <ShowResult ref="showResult" />
+                </div>
+            }
+        }
+
+        ReactDOM.render(
+            <div>
+                <h1 className="title">Beverage Slot Machine</h1>
+                <SlotMachine name="beverage" reels="3" />
+            </div>,
+            document.getElementById('container')
+        );
+    </script>
+</body>
+
+</html>

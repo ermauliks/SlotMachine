@@ -1,0 +1,158 @@
+html {
+    height: 100%;
+}
+
+body {
+    position: relative;
+    width: 670px;
+    margin: 0 auto;
+    top: 20%;
+    overflow: hidden;
+    background: #2b2b2b;
+    font-family: Arial;
+    color: white;
+    text-align: center;
+}
+
+.checkbox {
+    display: none;
+    box-sizing: border-box;
+    padding: 0;
+    display: none;
+}
+
+.title {
+    font-family: 'Great Vibes', cursive;
+    font-size: 50px;
+}
+
+.handle {
+    position: absolute;
+    right: 0;
+    top: 50%;
+}
+
+.handle::after,
+.handle::before {
+    content: "";
+    position: absolute;
+}
+
+.handle::before {
+    bottom: 50%;
+    width: 20px;
+    height: 90px;
+    background: linear-gradient(to right, #bbb 0%, #eee 30%, #bbb 100%);
+    border-radius: 0 0 10px 0;
+    transform-origin: bottom center;
+    transition: transform 0.2s ease;
+}
+
+.handle::after {
+    bottom: 80px;
+    left: -5px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: radial-gradient(circle farthest-corner at 25% 25%, #ffa07a 0%, #ff6347 100%);
+    transform-origin: bottom center;
+    transition: transform 0.2s ease;
+}
+
+.checkbox:checked~.handle:before {
+    transform: rotateX(180deg);
+}
+
+.checkbox:checked~.handle:after {
+    transform: translateY(190px);
+}
+
+.reel-container {
+    position: relative;
+}
+
+.reels {
+    margin: 0 0 30px 0;
+    overflow: hidden;
+    padding: 1.5rem 1rem;
+    border-radius: 10px;
+    background: linear-gradient(to bottom, #666, #444);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+    position: relative;
+}
+
+.reels::before,
+.reels::after {
+    content: "";
+    position: absolute;
+    top: 15px;
+    left: 2%;
+    height: 220px;
+    width: 96%;
+    border-radius: 10px;
+}
+
+.reels::before {
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1), 0 -1px 0 1px rgba(255, 255, 255, 0.1);
+    background: linear-gradient(to bottom, #444, #666);
+}
+
+.reels::after {
+    background-image: linear-gradient(to top, rgb(0, 0, 0) 0%, rgba(255, 255, 255, 0) 45%, rgba(255, 255, 255, 0) 53%, rgb(0, 0, 0) 100%);
+    z-index: 1;
+}
+
+.reel {
+    float: left;
+    height: 200px;
+    overflow: hidden;
+    margin-left: 10px;
+    border-radius: 15px;
+}
+
+.reel .choices {
+    position: relative;
+    top: 0px;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    height: 9999px;
+}
+
+.reel .choices li img {
+    position: relative;
+    width: 200px;
+    height: 200px;
+}
+
+.try-again-texts {
+    padding: 10px 20px;
+    left: 120px;
+    right: 120px;
+    display: inline-block;
+    position: absolute;
+    background: #545454;
+    border-radius: 50px;
+    font-weight: normal;
+    background-color: grey;
+}
+
+.winning-texts {
+    padding: 10px 20px;
+    left: 70px;
+    right: 70px;
+    color: black;
+    display: inline-block;
+    position: absolute;
+    font-weight: normal;
+    background: #545454;
+    border-radius: 50px;
+    background-color: white;
+    animation: blinker 0.5s linear infinite;
+}
+
+@keyframes blinker {
+    50% {
+        opacity: 0;
+    }
+}
